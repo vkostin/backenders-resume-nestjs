@@ -4,10 +4,8 @@ import {
   Get,
   Query,
   Res,
-  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { AdminHttpGuard } from '../auth/admin-http.guard';
 import { ResumeService } from './resume.service';
 import { renderHtml } from './resume-html';
 import { renderMarkdown } from './resume-markdown';
@@ -16,7 +14,6 @@ import { renderPdf } from './resume-pdf';
 const FORMATS = new Set(['html', 'pdf', 'md', 'markdown']);
 
 @Controller('resume')
-@UseGuards(AdminHttpGuard)
 export class ResumeController {
   constructor(private readonly resume: ResumeService) {}
 

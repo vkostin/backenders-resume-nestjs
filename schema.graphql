@@ -1,0 +1,166 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Achievement {
+  id: ID!
+  project: Project
+  statement: String!
+}
+
+input AchievementInput {
+  experienceId: ID!
+  projectId: ID
+  statement: String!
+}
+
+type Experience {
+  achievements: [Achievement!]!
+  company: String
+  description: String!
+  from: YearMonth!
+  id: ID!
+  position: String!
+  projects: [Project!]!
+  skills: [Skill!]!
+  to: YearMonth
+}
+
+input ExperienceInput {
+  company: String
+  description: String!
+
+  """YYYY-MM"""
+  from: String!
+  position: String!
+  to: String
+}
+
+type Illustration {
+  alt: String!
+  id: ID!
+  url: String!
+}
+
+input IllustrationPatchInput {
+  alt: String
+  idx: Int
+}
+
+type Link {
+  id: ID!
+  label: String!
+  preferred: Boolean!
+  url: String!
+}
+
+input LinkInput {
+  label: String!
+  preferred: Boolean! = false
+  url: String!
+}
+
+type Mutation {
+  addProjectIllustration(alt: String!, file: Upload!, idx: Int, projectId: ID!): Illustration!
+  createAchievement(input: AchievementInput!): Achievement!
+  createExperience(input: ExperienceInput!): Experience!
+  createLink(input: LinkInput!): Link!
+  createProject(input: ProjectInput!): Project!
+  createSkill(input: SkillInput!): Skill!
+  createSkillCategory(input: SkillCategoryInput!): SkillCategory!
+  deleteAchievement(id: ID!): ID!
+  deleteExperience(id: ID!): ID!
+  deleteIllustration(id: ID!): ID!
+  deleteLink(id: ID!): ID!
+  deleteProject(id: ID!): ID!
+  deleteSkill(id: ID!): ID!
+  deleteSkillCategory(id: ID!): ID!
+  removeProfilePhoto: Boolean!
+  setExperienceSkills(experienceId: ID!, skillIds: [ID!]!): ID!
+  setProfilePhoto(file: Upload!): Photo!
+  setProjectSkills(projectId: ID!, skillIds: [ID!]!): ID!
+  updateAchievement(id: ID!, idx: Int, input: AchievementInput!): Achievement!
+  updateExperience(id: ID!, idx: Int, input: ExperienceInput!): Experience!
+  updateIllustration(id: ID!, input: IllustrationPatchInput!): Illustration!
+  updateLink(id: ID!, idx: Int, input: LinkInput!): Link!
+  updateProfile(input: ProfileInput!): Profile!
+  updateProject(id: ID!, idx: Int, input: ProjectInput!): Project!
+  updateSkill(id: ID!, idx: Int, input: SkillInput!): Skill!
+  updateSkillCategory(id: ID!, idx: Int, input: SkillCategoryInput!): SkillCategory!
+}
+
+type Photo {
+  url: String!
+}
+
+type Profile {
+  description: String!
+  experience: [Experience!]!
+  experiences: [Experience!]!
+  headline: String
+  id: ID!
+  links: [Link!]!
+  name: String!
+  photo: Photo
+  projects: [Project!]!
+  skillCategories: [SkillCategory!]!
+  skills: [Skill!]!
+}
+
+input ProfileInput {
+  description: String!
+  headline: String
+  name: String!
+}
+
+type Project {
+  achievements: [Achievement!]!
+  experience: Experience
+  id: ID!
+  illustrations: [Illustration!]!
+  name: String!
+  skills: [Skill!]!
+  summary: String!
+  url: String
+}
+
+input ProjectInput {
+  experienceId: ID
+  name: String!
+  skillIds: [ID!]! = []
+  summary: String!
+  url: String
+}
+
+type Query {
+  profile: Profile!
+}
+
+type Skill {
+  categories: [SkillCategory!]!
+  id: ID!
+  name: String!
+  obsolete: Boolean!
+}
+
+type SkillCategory {
+  id: ID!
+  name: String!
+  skills: [Skill!]!
+}
+
+input SkillCategoryInput {
+  name: String!
+}
+
+input SkillInput {
+  categoryIds: [ID!]!
+  name: String!
+  obsolete: Boolean! = false
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+"""Year and month (YYYY-MM)"""
+scalar YearMonth

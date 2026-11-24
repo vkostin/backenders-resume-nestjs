@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio
+      POSTGRES_DB: portfolio
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  silo:
+    image: docker.io/pgsty/silo:RELEASE.2026-11-12T00-00-00Z
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: siloadmin
+      MINIO_ROOT_PASSWORD: siloadmin-change-me
+      MINIO_UPDATE: "off"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/ready"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - silodata:/data
+    restart: unless-stopped
+
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://portfolio:portfolio@postgres:5432/portfolio
+      S3_ENDPOINT: http://silo:9000
+      S3_PUBLIC_BASE_URL: http://localhost:9000/portfolio
+      S3_BUCKET: portfolio
+      S3_ACCESS_KEY: siloadmin
+      S3_SECRET_KEY: siloadmin-change-me
+      S3_REGION: us-east-1
+      SEED_MEDIA: ${SEED_MEDIA:-full}
+      SEED_RESET: ${SEED_RESET:-}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-dev-admin-token}
+      PORT: "3000"
+      PRISMA_LOG_QUERIES: ${PRISMA_LOG_QUERIES:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      silo:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  silodata:
